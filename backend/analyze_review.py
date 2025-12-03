@@ -110,29 +110,29 @@ def analyze_review(review_title, review_text, rating, verified_purchase=False,
     issues = []
     
     if text_features['review_len_chars'] < 100:
-        issues.append(f"❌ Very short review ({text_features['review_len_chars']} chars) - helpful reviews are typically longer")
+        issues.append(f"Very short review ({text_features['review_len_chars']} chars) - helpful reviews are typically longer")
     
     if text_features['review_is_long'] == 0:
-        issues.append(f"⚠️  Review is not long (under 500 chars) - longer reviews tend to be more helpful")
+        issues.append(f"Review is not long (under 500 chars) - longer reviews tend to be more helpful")
     
     if text_features['punct_emph_count'] == 0:
-        issues.append("⚠️  No punctuation emphasis (! or ?) - can indicate lack of engagement")
+        issues.append("No punctuation emphasis (! or ?) - can indicate lack of engagement")
     
     if text_features['sentiment_polarity'] > -0.1 and text_features['sentiment_polarity'] < 0.1:
-        issues.append(f"⚠️  Neutral sentiment ({text_features['sentiment_polarity']:.3f}) - helpful reviews often have stronger sentiment")
+        issues.append(f"Neutral sentiment ({text_features['sentiment_polarity']:.3f}) - helpful reviews often have stronger sentiment")
     
     if rating <= 2:
         issues.append(f"❌ Low rating ({rating}) - low ratings without detailed explanation are often unhelpful")
     
     if not verified_purchase:
-        issues.append("⚠️  Not a verified purchase - verified purchases tend to be more helpful")
+        issues.append("Not a verified purchase - verified purchases tend to be more helpful")
     
     if issues:
         print("\nPotential Issues:")
         for issue in issues:
             print(f"  {issue}")
     else:
-        print("\n✅ No obvious issues detected in feature extraction")
+        print("\n No obvious issues detected in feature extraction")
     
     print("\n" + "="*80)
     print("WHY IT MIGHT BE PREDICTED AS HELPFUL")
@@ -157,43 +157,6 @@ def analyze_review(review_title, review_text, rating, verified_purchase=False,
     else:
         print("\nNo strong helpful indicators found")
     
-    print("\n" + "="*80)
-    print("RECOMMENDATIONS TO FIX THE MODEL")
-    print("="*80)
-    print("""
-1. ADD MORE TEXT QUALITY FEATURES:
-   - Word count (not just character count)
-   - Specificity score (mentions specific features/use cases)
-   - Readability score
-   - Presence of concrete examples
-   - Ratio of subjective vs objective language
-
-2. IMPROVE SENTIMENT ANALYSIS:
-   - Current sentiment might be too simplistic
-   - Consider detecting vague language ("kinda", "maybe", "probably")
-   - Detect user error admissions (should be negative signal)
-
-3. ADD CONTENT QUALITY FEATURES:
-   - Check for vague phrases ("didn't vibe", "kinda confusing")
-   - Detect lack of specific details
-   - Identify user error admissions
-   - Measure information density
-
-4. RETRAIN WITH MORE FEEDBACK:
-   - Collect more user feedback on edge cases
-   - The feedback you just submitted will help
-   - Need at least 100 feedback samples for retraining
-
-5. ADJUST FEATURE WEIGHTS:
-   - The model might be over-weighting sentiment
-   - Consider reducing weight on sentiment for short reviews
-   - Increase weight on review length and specificity
-
-6. ADD RULE-BASED FILTERS:
-   - Very short reviews (< 100 chars) with low ratings should be flagged
-   - Reviews admitting user error should be penalized
-   - Vague language should reduce helpfulness score
-    """)
     
     return result, feature_dict, text_features
 
